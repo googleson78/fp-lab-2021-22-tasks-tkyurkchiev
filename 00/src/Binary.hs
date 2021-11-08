@@ -9,6 +9,7 @@ data Bit = Zero | One
 infixl 6 :.
 
 
+
 succBinary :: Binary -> Binary
 succBinary End = End :. One
 succBinary (x :. Zero) = x :. One
@@ -35,52 +36,26 @@ hasLeadingZero (x :. _) = hasLeadingZero x
 
 isEnd :: Binary -> Bool
 isEnd End = True
+isEnd (x :. Zero) = isEnd x
 isEnd _ = False
 
 
-flipBinary :: Binary -> Binary -> Binary
-flipBinary End x = x
-flipBinary (a :. b) x = flipBinary a (x:. b)
-
-
 canonicalise :: Binary -> Binary
-canonicalise num = flipBinary (canonicalise' $ flipBinary num End) End
-  where
-    canonicalise' :: Binary -> Binary
-    canonicalise' End = End
-    canonicalise' (b :. Zero) = canonicalise' b
-    canonicalise' (b :. One) = b :. One
-    
+canonicalise End = End
+canonicalise (x :. One) = canonicalise x :. One
+canonicalise (x :. Zero) = if isEnd x then End else canonicalise x :. Zero
+
 
 isZero :: Bit -> Bool
 isZero Zero = True
 isZero _ = False
 
+
 addBinary :: Binary -> Binary -> Binary
-addBinary a b = flipBinary (adder a b Zero End) End
-  where
-    adder :: Binary -> Binary -> Bit -> Binary -> Binary
-    
-    adder End End flag result = if isZero flag then result else result :. One
-    
-    adder (x :. y) End flag result 
-      |isZero flag = adder x End Zero (result :. y)
-      |isZero y = adder x End Zero (result :. One)
-      |otherwise = adder x End One (result :. Zero)
-
-
-    adder End (x :. y) flag result
-      | isZero flag = adder End x Zero (result :. y)
-      | isZero y = adder x End Zero (result :. One)
-      | otherwise = adder End x One (result :. Zero)
-
-    adder (x :. Zero) (y :. Zero) flag result = adder x y Zero (result :. flag)
-
-    adder (x :. Zero) (y :. One) flag result = if isZero flag then adder x y Zero (result :. One) else adder x y One (result :. Zero)
-
-    adder (x :. One) (y :. Zero) flag result = if isZero flag then adder x y Zero (result :. One) else adder x y One (result :. Zero)
-
-    adder (x :. One) (y :. One) flag result = adder x y One (result :. flag)
-
-    
-    
+addBinary End End = End
+addBinary x End = x
+addBinary End x = x
+addBinary (x:.Zero) (y:.One) = addBinary x y :. One
+addBinary (x:.Zero) (y:.Zero) =  addBinary x y :. Zero
+addBinary (x:.One) (y:.Zero) =  addBinary x y :. One
+addBinary (x:.One) (y:.One) =  addBinary x y :. One :. Zero
