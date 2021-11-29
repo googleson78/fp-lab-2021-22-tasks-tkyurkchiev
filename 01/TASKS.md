@@ -514,8 +514,8 @@ mkArray :: ArrayStart -> ArraySize -> Array
 mkArrayStart :: Int -> Maybe ArrayStart
 mkArrayStart x = if x < 0 then Nothing else Just x
 -- arrays can't have a negative size
-mkArrayStart :: Int -> Maybe ArraySize
-mkArrayStart x = if x < 0 then Nothing else Just x
+mkArraySize :: Int -> Maybe ArraySize
+mkArraySize x = if x < 0 then Nothing else Just x
 ```
 
 
@@ -641,7 +641,7 @@ If
 ```haskell
 If
   (Var "x")
-  (Val 9)
+  (Val 18)
   (Val 9)
 ```
 
@@ -709,7 +709,7 @@ If (Var "x") (Var "x") (Val 69)
 
 ### Тестове
 
-За да пускате тестовете за `Sum`, сменете `solvngSum` на `True`.
+За да пускате тестовете за `Sum`, сменете `solvingSum` на `True`.
 
 ### Компилация
 
